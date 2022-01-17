@@ -74,8 +74,12 @@ type TextFormatter struct {
 	// PadLevelText is a superset of the DisableLevelTruncation option
 	PadLevelText bool
 
+	// add padding with "func"field
+	// set True on PadFuncText 
+	// set number of padding 
 	PadFuncText bool
 	PadFuncNum  int
+	
 	// QuoteEmptyFields will wrap empty fields in quotes if true
 	QuoteEmptyFields bool
 
@@ -325,6 +329,7 @@ func (f *TextFormatter) appendKeyValue(b *bytes.Buffer, key string, value interf
 	if b.Len() > 0 {
 		b.WriteByte(' ')
 	}
+	// only write func, msg's key
 	if key == "func" || key == "msg" {
 		b.WriteString(key)
 		b.WriteByte('=')
@@ -342,6 +347,9 @@ func (f *TextFormatter) appendValue(b *bytes.Buffer, key string, value interface
 	if !f.needsQuoting(stringVal) {
 		b.WriteString(stringVal)
 	} else {
+		// if user want to write padding 
+		// EX)
+		// [2022-01-17T14:52:22+09:00] [INFO] func=[CachedCountInc]          msg=[cachedMap[100626][44] : 209]
 		if f.PadFuncText && f.PadFuncNum != 0 {
 			if key == "func" {
 				stringVal = fmt.Sprintf("[%s]", stringVal)
